@@ -1,0 +1,518 @@
+
+-- ***********************************************************************************************************
+-- * Date           : 2024-02-23                                                                             *
+-- * Time           : 11:33                                                                                  *
+-- * Spreadsheet    : /Users/ifickling/Documents/GitHub/psEnvManager/SpreadSheet/EDU_Examples_ArchClass.xlsx *
+-- * Environment(s) : GDWH_PROD                                                                              *
+-- ***********************************************************************************************************
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Create the security roles for GDWH_PROD_SYSADMIN and GDWH_PROD_SECADMIN                              |
+-- +------------------------------------------------------------------------------------------------------+
+
+   USE ROLE USERADMIN;
+
+   CREATE ROLE IF NOT EXISTS GDWH_PROD_SECADMIN;
+   CREATE ROLE IF NOT EXISTS GDWH_PROD_SYSADMIN;
+
+   GRANT CREATE ROLE ON ACCOUNT TO GDWH_PROD_SECADMIN;
+   GRANT ROLE GDWH_PROD_SECADMIN TO ROLE USERADMIN;
+   GRANT ROLE GDWH_PROD_SYSADMIN TO ROLE SYSADMIN;
+
+   USE ROLE SYSADMIN;
+
+   GRANT CREATE DATABASE ON ACCOUNT TO GDWH_PROD_SYSADMIN;
+   GRANT CREATE WAREHOUSE ON ACCOUNT TO GDWH_PROD_SYSADMIN;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | |||||||||||||||||||||||||||||||||||||||||| Switch role... |||||||||||||||||||||||||||||||||||||||||| |
+-- +------------------------------------------------------------------------------------------------------+
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Try to use role GDWH_PROD_SYSADMIN                                                                   |
+-- +------------------------------------------------------------------------------------------------------+
+
+USE ROLE GDWH_PROD_SYSADMIN;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Create database GDWH_PROD                                                                            |
+-- +------------------------------------------------------------------------------------------------------+
+
+   CREATE DATABASE IF NOT EXISTS GDWH_PROD DATA_RETENTION_TIME_IN_DAYS = 1;
+USE DATABASE GDWH_PROD;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | |||||||||||||||||||||||||||||||||||||||||| Switch role... |||||||||||||||||||||||||||||||||||||||||| |
+-- +------------------------------------------------------------------------------------------------------+
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Try to use role GDWH_PROD_SECADMIN                                                                   |
+-- +------------------------------------------------------------------------------------------------------+
+
+USE ROLE GDWH_PROD_SECADMIN;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Create Account Level functional roles                                                                |
+-- +------------------------------------------------------------------------------------------------------+
+
+   CREATE ROLE IF NOT EXISTS GDWH_PROD_SALES_ETL;
+   CREATE ROLE IF NOT EXISTS GDWH_PROD_AOR_ETL;
+   CREATE ROLE IF NOT EXISTS GDWH_PROD_CIM_ETL;
+   CREATE ROLE IF NOT EXISTS GDWH_PROD_SALES_ANALYST;
+   CREATE ROLE IF NOT EXISTS GDWH_PROD_SALES_REPORT;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Create access roles, Restrictive DB Only Access Roles                                                |
+-- +------------------------------------------------------------------------------------------------------+
+
+USE DATABASE GDWH_PROD;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_FCR_RO;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_FCR_RTV;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_FCR_SU;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_FCR_RW;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_FCR_SFULL;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_AOR_RO;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_AOR_RTV;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_AOR_SU;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_AOR_RW;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_AOR_SFULL;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_CIM_RO;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_CIM_RTV;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_CIM_SU;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_CIM_RW;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_CIM_SFULL;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Create the SDR Roles                                                                                 |
+-- +------------------------------------------------------------------------------------------------------+
+
+USE ROLE GDWH_PROD_SECADMIN;
+   CREATE ROLE IF NOT EXISTS _SDR_HIGHLY_CONFIDENTAL;
+   CREATE ROLE IF NOT EXISTS _SDR_CONFIDENTIAL;
+   CREATE ROLE IF NOT EXISTS _SDR_AFRICA;
+   CREATE ROLE IF NOT EXISTS _SDR_ASIA;
+   CREATE ROLE IF NOT EXISTS _SDR_EUROPE;
+   CREATE ROLE IF NOT EXISTS _SDR_MIDDLE_EAST;
+   CREATE ROLE IF NOT EXISTS _SDR_ALL_REGIONS;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Create warehouse access roles                                                                        |
+-- +------------------------------------------------------------------------------------------------------+
+
+USE ROLE GDWH_PROD_SECADMIN;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_ADHOC_WH_WU;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_ADHOC_WH_WFULL;
+   CREATE  ROLE IF NOT EXISTS _GDWH_PROD_ADHOC_WH_ALL;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant ownership on warehouse access roles to GDWH_PROD_SECADMIN                                      |
+-- +------------------------------------------------------------------------------------------------------+
+
+   GRANT OWNERSHIP ON ROLE _GDWH_PROD_ADHOC_WH_WU TO ROLE GDWH_PROD_SECADMIN;
+   GRANT OWNERSHIP ON ROLE _GDWH_PROD_ADHOC_WH_WFULL TO ROLE GDWH_PROD_SECADMIN;
+   GRANT OWNERSHIP ON ROLE _GDWH_PROD_ADHOC_WH_ALL TO ROLE GDWH_PROD_SECADMIN;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Create Super-Roles  (ownership stays with USERADMIN)                                                 |
+-- +------------------------------------------------------------------------------------------------------+
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant super-roles to users                                                                           |
+-- +------------------------------------------------------------------------------------------------------+
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | |||||||||||||||||||||||||||||||||||||||||| Switch role... |||||||||||||||||||||||||||||||||||||||||| |
+-- +------------------------------------------------------------------------------------------------------+
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Try to use role GDWH_PROD_SECADMIN                                                                   |
+-- +------------------------------------------------------------------------------------------------------+
+
+USE ROLE GDWH_PROD_SECADMIN;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant account level functional roles to GDWH_PROD_SYSADMIN                                           |
+-- +------------------------------------------------------------------------------------------------------+
+
+   GRANT ROLE GDWH_PROD_SALES_ETL TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE GDWH_PROD_AOR_ETL TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE GDWH_PROD_CIM_ETL TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE GDWH_PROD_SALES_ANALYST TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE GDWH_PROD_SALES_REPORT TO ROLE GDWH_PROD_SYSADMIN;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant access roles to GDWH_PROD_SYSADMIN                                                             |
+-- +------------------------------------------------------------------------------------------------------+
+
+   GRANT ROLE _GDWH_PROD_FCR_RO TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_FCR_RTV TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_FCR_SU TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_FCR_RW TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_FCR_SFULL TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_AOR_RO TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_AOR_RTV TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_AOR_SU TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_AOR_RW TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_AOR_SFULL TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_CIM_RO TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_CIM_RTV TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_CIM_SU TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_CIM_RW TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_CIM_SFULL TO ROLE GDWH_PROD_SYSADMIN;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant access roles to functional roles                                                               |
+-- +------------------------------------------------------------------------------------------------------+
+
+   GRANT ROLE _GDWH_PROD_FCR_SU TO ROLE GDWH_PROD_SALES_ETL;
+   GRANT ROLE _GDWH_PROD_FCR_RTV TO ROLE GDWH_PROD_SALES_ANALYST;
+   GRANT ROLE _GDWH_PROD_FCR_RW TO ROLE GDWH_PROD_SALES_REPORT;
+   GRANT ROLE _GDWH_PROD_AOR_SU TO ROLE GDWH_PROD_SALES_ETL;
+   GRANT ROLE _GDWH_PROD_AOR_SU TO ROLE GDWH_PROD_AOR_ETL;
+   GRANT ROLE _GDWH_PROD_AOR_RTV TO ROLE GDWH_PROD_SALES_ANALYST;
+   GRANT ROLE _GDWH_PROD_AOR_RO TO ROLE GDWH_PROD_SALES_REPORT;
+   GRANT ROLE _GDWH_PROD_CIM_SU TO ROLE GDWH_PROD_SALES_ETL;
+   GRANT ROLE _GDWH_PROD_CIM_SU TO ROLE GDWH_PROD_CIM_ETL;
+   GRANT ROLE _GDWH_PROD_CIM_RTV TO ROLE GDWH_PROD_SALES_ANALYST;
+   GRANT ROLE _GDWH_PROD_CIM_RO TO ROLE GDWH_PROD_SALES_REPORT;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant warehouse access roles to GDWH_PROD_SYSADMIN                                                   |
+-- +------------------------------------------------------------------------------------------------------+
+
+USE ROLE GDWH_PROD_SECADMIN;
+   GRANT ROLE _GDWH_PROD_ADHOC_WH_WU TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_ADHOC_WH_WFULL TO ROLE GDWH_PROD_SYSADMIN;
+   GRANT ROLE _GDWH_PROD_ADHOC_WH_ALL TO ROLE GDWH_PROD_SYSADMIN;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant virtual warehouse access roles to functional roles                                             |
+-- +------------------------------------------------------------------------------------------------------+
+
+   GRANT ROLE _GDWH_PROD_ADHOC_WH_WU TO ROLE GDWH_PROD_SALES_ETL;
+   GRANT ROLE _GDWH_PROD_ADHOC_WH_WU TO ROLE GDWH_PROD_SALES_ANALYST;
+   GRANT ROLE _GDWH_PROD_ADHOC_WH_WU TO ROLE GDWH_PROD_SALES_REPORT;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant functional roles to super-roles                                                                |
+-- +------------------------------------------------------------------------------------------------------+
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant functional roles to users                                                                      |
+-- +------------------------------------------------------------------------------------------------------+
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | |||||||||||||||||||||||||||||||||||||||||| Switch role... |||||||||||||||||||||||||||||||||||||||||| |
+-- +------------------------------------------------------------------------------------------------------+
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Try to use role GDWH_PROD_SYSADMIN                                                                   |
+-- +------------------------------------------------------------------------------------------------------+
+
+USE ROLE GDWH_PROD_SYSADMIN;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant db usage to access roles                                                                       |
+-- +------------------------------------------------------------------------------------------------------+
+
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_FCR_RTV;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_FCR_SU;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_AOR_RTV;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_AOR_SU;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_CIM_RTV;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_CIM_SU;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON DATABASE GDWH_PROD TO ROLE _GDWH_PROD_CIM_SFULL;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Create the warehouses                                                                                |
+-- +------------------------------------------------------------------------------------------------------+
+
+   CREATE WAREHOUSE IF NOT EXISTS GDWH_PROD_ADHOC_WH WITH WAREHOUSE_TYPE = 'STANDARD' warehouse_size='xsmall', scaling_policy='standard',min_cluster_count=1, max_cluster_count=1, auto_suspend=300,auto_resume=true, initially_suspended=true;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant privileges on warehouses to access roles                                                       |
+-- +------------------------------------------------------------------------------------------------------+
+
+   GRANT USAGE ON WAREHOUSE GDWH_PROD_ADHOC_WH TO ROLE _GDWH_PROD_ADHOC_WH_WU;
+   GRANT USAGE, OPERATE,MODIFY ON WAREHOUSE GDWH_PROD_ADHOC_WH TO ROLE _GDWH_PROD_ADHOC_WH_WFULL;
+   GRANT ALL ON WAREHOUSE GDWH_PROD_ADHOC_WH TO ROLE _GDWH_PROD_ADHOC_WH_ALL;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Create the schemas                                                                                   |
+-- +------------------------------------------------------------------------------------------------------+
+
+   CREATE SCHEMA IF NOT EXISTS GDWH_PROD.FCR WITH MANAGED ACCESS data_retention_time_in_days=1 comment = '';
+   CREATE SCHEMA IF NOT EXISTS GDWH_PROD.AOR WITH MANAGED ACCESS data_retention_time_in_days=1 comment = '';
+   CREATE SCHEMA IF NOT EXISTS GDWH_PROD.CIM WITH MANAGED ACCESS data_retention_time_in_days=1 comment = '';
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant ownership on objects to access roles                                                           |
+-- +------------------------------------------------------------------------------------------------------+
+
+   GRANT OWNERSHIP ON ALL TABLES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL VIEWS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL STAGES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL FILE FORMATS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL STREAMS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL TASKS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL SEQUENCES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL FUNCTIONS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL TABLES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL VIEWS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL STAGES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL FILE FORMATS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL STREAMS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL TASKS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL SEQUENCES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL FUNCTIONS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL TABLES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL VIEWS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL STAGES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL FILE FORMATS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL STREAMS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL TASKS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL SEQUENCES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL FUNCTIONS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL REVOKE CURRENT GRANTS;
+   GRANT OWNERSHIP ON ALL PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL REVOKE CURRENT GRANTS;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant future ownership on objects to access roles                                                    |
+-- +------------------------------------------------------------------------------------------------------+
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant privileges on objects to access roles                                                          |
+-- +------------------------------------------------------------------------------------------------------+
+
+   GRANT SELECT ON ALL TABLES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT SELECT ON ALL VIEWS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE,READ ON ALL STAGES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE ON ALL FILE FORMATS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT SELECT ON ALL STREAMS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE ON ALL FUNCTIONS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE ON ALL PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE ON SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT SELECT ON ALL TABLES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RTV;
+   GRANT SELECT ON ALL VIEWS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RTV;
+   GRANT USAGE ON ALL FUNCTIONS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SU;
+   GRANT USAGE ON ALL PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SU;
+   GRANT USAGE ON SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SU;
+   GRANT SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES ON ALL TABLES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT SELECT ON ALL VIEWS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE,READ,WRITE ON ALL STAGES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON ALL FILE FORMATS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT SELECT ON ALL STREAMS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT MONITOR, OPERATE ON ALL TASKS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON ALL SEQUENCES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON ALL FUNCTIONS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON ALL PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT ALL ON ALL TABLES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON ALL VIEWS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON ALL STAGES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON ALL FILE FORMATS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON ALL STREAMS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT MONITOR,OPERATE ON ALL TASKS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON ALL SEQUENCES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON ALL FUNCTIONS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON ALL PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT SELECT ON ALL TABLES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT SELECT ON ALL VIEWS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE,READ ON ALL STAGES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE ON ALL FILE FORMATS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT SELECT ON ALL STREAMS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE ON ALL FUNCTIONS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE ON ALL PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE ON SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT SELECT ON ALL TABLES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RTV;
+   GRANT SELECT ON ALL VIEWS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RTV;
+   GRANT USAGE ON ALL FUNCTIONS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SU;
+   GRANT USAGE ON ALL PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SU;
+   GRANT USAGE ON SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SU;
+   GRANT SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES ON ALL TABLES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT SELECT ON ALL VIEWS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE,READ,WRITE ON ALL STAGES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON ALL FILE FORMATS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT SELECT ON ALL STREAMS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT MONITOR, OPERATE ON ALL TASKS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON ALL SEQUENCES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON ALL FUNCTIONS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON ALL PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT ALL ON ALL TABLES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON ALL VIEWS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON ALL STAGES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON ALL FILE FORMATS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON ALL STREAMS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT MONITOR,OPERATE ON ALL TASKS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON ALL SEQUENCES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON ALL FUNCTIONS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON ALL PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT SELECT ON ALL TABLES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT SELECT ON ALL VIEWS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE,READ ON ALL STAGES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE ON ALL FILE FORMATS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT SELECT ON ALL STREAMS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE ON ALL FUNCTIONS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE ON ALL PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE ON SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT SELECT ON ALL TABLES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RTV;
+   GRANT SELECT ON ALL VIEWS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RTV;
+   GRANT USAGE ON ALL FUNCTIONS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SU;
+   GRANT USAGE ON ALL PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SU;
+   GRANT USAGE ON SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SU;
+   GRANT SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES ON ALL TABLES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT SELECT ON ALL VIEWS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE,READ,WRITE ON ALL STAGES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON ALL FILE FORMATS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT SELECT ON ALL STREAMS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT MONITOR, OPERATE ON ALL TASKS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON ALL SEQUENCES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON ALL FUNCTIONS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON ALL PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT ALL ON ALL TABLES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON ALL VIEWS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON ALL STAGES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON ALL FILE FORMATS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON ALL STREAMS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT MONITOR,OPERATE ON ALL TASKS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON ALL SEQUENCES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON ALL FUNCTIONS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON ALL PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Grant future privileges on objects to access roles                                                   |
+-- +------------------------------------------------------------------------------------------------------+
+
+   GRANT SELECT ON FUTURE TABLES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT SELECT ON FUTURE VIEWS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE,READ ON FUTURE STAGES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE ON FUTURE FILE FORMATS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT SELECT ON FUTURE STREAMS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RO;
+   GRANT SELECT ON FUTURE TABLES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RTV;
+   GRANT SELECT ON FUTURE VIEWS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RTV;
+   GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SU;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SU;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SU;
+   GRANT SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES ON FUTURE TABLES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT SELECT ON FUTURE VIEWS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE,READ,WRITE ON FUTURE STAGES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON FUTURE FILE FORMATS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT SELECT ON FUTURE STREAMS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT MONITOR, OPERATE ON FUTURE TASKS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON FUTURE SEQUENCES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_RW;
+   GRANT ALL ON FUTURE TABLES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON FUTURE VIEWS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON FUTURE STAGES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON FUTURE FILE FORMATS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON FUTURE STREAMS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT MONITOR,OPERATE ON FUTURE TASKS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON FUTURE SEQUENCES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON FUTURE FUNCTIONS IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON FUTURE PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT ALL ON FUTURE PROCEDURES IN SCHEMA FCR TO ROLE _GDWH_PROD_FCR_SFULL;
+   GRANT SELECT ON FUTURE TABLES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT SELECT ON FUTURE VIEWS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE,READ ON FUTURE STAGES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE ON FUTURE FILE FORMATS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT SELECT ON FUTURE STREAMS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RO;
+   GRANT SELECT ON FUTURE TABLES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RTV;
+   GRANT SELECT ON FUTURE VIEWS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RTV;
+   GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SU;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SU;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SU;
+   GRANT SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES ON FUTURE TABLES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT SELECT ON FUTURE VIEWS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE,READ,WRITE ON FUTURE STAGES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON FUTURE FILE FORMATS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT SELECT ON FUTURE STREAMS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT MONITOR, OPERATE ON FUTURE TASKS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON FUTURE SEQUENCES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_RW;
+   GRANT ALL ON FUTURE TABLES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON FUTURE VIEWS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON FUTURE STAGES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON FUTURE FILE FORMATS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON FUTURE STREAMS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT MONITOR,OPERATE ON FUTURE TASKS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON FUTURE SEQUENCES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON FUTURE FUNCTIONS IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON FUTURE PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT ALL ON FUTURE PROCEDURES IN SCHEMA AOR TO ROLE _GDWH_PROD_AOR_SFULL;
+   GRANT SELECT ON FUTURE TABLES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT SELECT ON FUTURE VIEWS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE,READ ON FUTURE STAGES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE ON FUTURE FILE FORMATS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT SELECT ON FUTURE STREAMS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RO;
+   GRANT SELECT ON FUTURE TABLES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RTV;
+   GRANT SELECT ON FUTURE VIEWS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RTV;
+   GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SU;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SU;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SU;
+   GRANT SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES ON FUTURE TABLES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT SELECT ON FUTURE VIEWS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE,READ,WRITE ON FUTURE STAGES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON FUTURE FILE FORMATS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT SELECT ON FUTURE STREAMS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT MONITOR, OPERATE ON FUTURE TASKS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON FUTURE SEQUENCES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_RW;
+   GRANT ALL ON FUTURE TABLES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON FUTURE VIEWS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON FUTURE STAGES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON FUTURE FILE FORMATS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON FUTURE STREAMS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT MONITOR,OPERATE ON FUTURE TASKS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON FUTURE SEQUENCES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON FUTURE FUNCTIONS IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON FUTURE PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+   GRANT ALL ON FUTURE PROCEDURES IN SCHEMA CIM TO ROLE _GDWH_PROD_CIM_SFULL;
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Build of GDWH_PROD complete - have a nice day                                                        |
+-- +------------------------------------------------------------------------------------------------------+
+
+
+-- +------------------------------------------------------------------------------------------------------+
+-- | Thanks for using RBAC Automation Manager                                                             |
+-- +------------------------------------------------------------------------------------------------------+
+

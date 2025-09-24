@@ -1,0 +1,9 @@
+# Snowflake
+account=as21177.eu-west-1
+user=user001
+password=xxxxxx
+role=<role>
+warehouse=<warehouse>>
+
+
+
