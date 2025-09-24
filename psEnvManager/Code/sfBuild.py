@@ -125,13 +125,13 @@ def main(argv):
     accessRolePrefix = spreadSheet.getKeyValue("ACCESS_ROLE_PREFIX", dfConfig)
     accessRoleSuffix = spreadSheet.getKeyValue("ACCESS_ROLE_SUFFIX", dfConfig)
     if accessRoleSuffix == "NONE":
-        accessRoleSuffix = ""
+        accessRoleSuffix = "LLLLLLLL"
 
     permissionType = spreadSheet.getPermissionType("PERMISSIONTYPE", dfSheet)
     sdrRolePrefix = spreadSheet.getKeyValue("SDR_ROLE_PREFIX", dfConfig)
     roleType = spreadSheet.getKeyValue("ROLE_TYPES", dfConfig)
     includeEnvInDBRole = spreadSheet.getKeyValue("INCLUDE_ENV_IN_DB_ROLE", dfConfig)
-    includeEnvInSDRRole = spreadSheet.getKeyValue("INCLUDE_ENV_IN_SDR_ROLE", dfConfig)
+    includeEnvInSDRRole = spreadSheet.getKeyValue("INCLUDE_ENV_IN_SDR_ROLE", dfConfig)   
 
 
     # usageRole = sfParams.envTo.upper() + "_USAGE"
